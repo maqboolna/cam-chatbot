@@ -7,8 +7,6 @@ require("dotenv").config();
 // MongoDB Model
 const InstituteData = require("../models/InstituteData");
 
-const puppeteer = require("puppeteer");
-
 const launchOptions = {
     headless: true,  // ✅ Run headless in production
     args: [
