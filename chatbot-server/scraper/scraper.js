@@ -7,10 +7,7 @@ require("dotenv").config();
 // MongoDB Model
 const InstituteData = require("../models/InstituteData");
 
-// Connect to MongoDB
-mongoose.connect("mongodb://localhost:27017/chatbot", { useNewUrlParser: true, useUnifiedTopology: true })
-    .then(() => console.log("✅ Connected to MongoDB"))
-    .catch(err => console.error("❌ MongoDB Connection Error:", err));
+ 
 
 // **Dynamic Content Extraction for WordPress**
 const extractContent = async (url) => {

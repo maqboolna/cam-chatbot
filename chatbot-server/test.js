@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const axios = require("axios");
 require("dotenv").config(); // To load environment variables (like OPENAI_API_KEY)
-
+const connectDB = require("./config/db");
 // MongoDB Models
 const InstituteData = require("./models/InstituteData");
 const FAQ = require("./models/FAQ");
@@ -10,12 +10,7 @@ const FAQ = require("./models/FAQ");
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
 // MongoDB Connection
-mongoose.connect("mongodb://localhost:27017/chatbot", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-})
-    .then(() => console.log("✅ Connected to MongoDB"))
-    .catch((err) => console.error("❌ MongoDB Connection Error:", err));
+connectDB();
 
 // Function to call OpenAI Chat API to generate FAQs
 const generateFaqsUsingOpenAI = async (title, body) => {
