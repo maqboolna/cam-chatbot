@@ -48,7 +48,7 @@ const ChatWindow = ({ user, onClose }) => {
         setIsTyping(true);
 
         try {
-            const response = await axios.post("http://localhost:5000/chat", {
+            const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/chat`, {
                 user: user,
                 message: input
             });

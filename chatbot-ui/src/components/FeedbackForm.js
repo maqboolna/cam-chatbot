@@ -13,7 +13,7 @@ const FeedbackForm = ({ user, setFeedbackActive, setMessages }) => {
         }
 
         try {
-            await axios.post("http://localhost:5000/chat/feedback", {
+            await axios.post(`${process.env.REACT_APP_BACKEND_URL}${process.env.REACT_APP_API_FEEDBACK_URL}`, {
                 user,
                 rating,
                 comments
