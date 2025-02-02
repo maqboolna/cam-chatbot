@@ -7,13 +7,22 @@ require("dotenv").config();
 // MongoDB Model
 const InstituteData = require("../models/InstituteData");
 
- 
+const puppeteer = require("puppeteer");
+
+const launchOptions = {
+    headless: true,  // ✅ Run headless in production
+    args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+    ],
+    executablePath: process.env.CHROME_PATH || puppeteer.executablePath(),  // ✅ Use Render's Chromium path if available
+};
 
 // **Dynamic Content Extraction for WordPress**
 const extractContent = async (url) => {
     console.log(`🔍 Scraping: ${url}`);
 
-    const browser = await puppeteer.launch({ headless: true });
+    const browser = await puppeteer.launch(launchOptions);
     const page = await browser.newPage();
 
     try {
