@@ -11,7 +11,9 @@ const FeedbackForm = ({ user, setFeedbackActive, setMessages }) => {
             alert("Please provide both a rating and comments.");
             return;
         }
-
+        console.log('Backend URL:', process.env.REACT_APP_BACKEND_URL);
+        console.log('Feedback Endpoint:', process.env.REACT_APP_API_FEEDBACK_URL);
+        
         try {
             await axios.post(`${process.env.REACT_APP_BACKEND_URL}${process.env.REACT_APP_API_FEEDBACK_URL}`, {
                 user,
