@@ -68,6 +68,13 @@ router.post("/", async (req, res) => {
     }
 
     try {
+          // ✅ Handle general greetings directly
+          const greetings = ["hi", "hello", "hey", "greetings", "good morning", "good evening", "good afternoon"];
+          if (greetings.includes(message.toLowerCase())) {
+              return res.json({ response: `👋 Hi **${user.name}**! How can I assist you today?` });
+          }
+
+          
         let botResponse;
 
         // ✅ Detect if the user is ending the conversation

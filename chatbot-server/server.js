@@ -5,7 +5,7 @@ require("dotenv").config();
 const connectDB = require("./config/db");
 const chatRoutes = require("./routes/chatRoutes");
 const faqRoutes = require("./routes/faqRoutes");
-//const scraperRoutes = require("./routes/scraperRoutes");  // ✅ Import scraper routes
+const scraperRoutes = require("./routes/scraperRoutes");  // ✅ Import scraper routes
 
 const app = express();
 app.use(
@@ -21,7 +21,7 @@ connectDB();
 // Chat & FAQ Routes
 app.use("/chat", chatRoutes);
 app.use("/faqs", faqRoutes);
-//app.use("/scraper", scraperRoutes); // ✅ Add scraper routes
+app.use("/scraper", scraperRoutes); // ✅ Add scraper routes
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));

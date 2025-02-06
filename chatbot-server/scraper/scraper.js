@@ -65,25 +65,85 @@ const extractContent = async (url) => {
     }
 };
 
-// **Fetch and Process Sitemap**
-const scrapeWebsite = async () => {
+
+const fetchSitemapUrls = async (sitemapUrl) => {
     try {
-        console.log("🚀 Fetching Sitemap...");
-        const { data } = await axios.get("https://thecam.ca/wp-sitemap-posts-page-1.xml");
+        const { data } = await axios.get(sitemapUrl);
         const parsedSitemap = await parseStringPromise(data);
-        const urls = parsedSitemap.urlset.url.map(urlObj => urlObj.loc[0]);
+        const urls = [];
 
-        console.log(`✅ Found ${urls.length} pages in sitemap.`);
+        // Check if the current sitemap contains website URLs or nested sitemaps
+        if (parsedSitemap.urlset) {
+            // Collect URLs if it's a regular sitemap with website links
+            parsedSitemap.urlset.url.forEach((urlObj) => {
+                urls.push(urlObj.loc[0]);
+            });
+        } else if (parsedSitemap.sitemapindex) {
+            // If it contains nested sitemaps, recursively fetch them
+            for (const sitemap of parsedSitemap.sitemapindex.sitemap) {
+                const nestedUrls = await fetchSitemapUrls(sitemap.loc[0]);
+                urls.push(...nestedUrls);
+            }
+        }
 
-        for (const url of urls) {
+        return urls;
+    } catch (error) {
+        console.error(`❌ Error fetching or parsing sitemap ${sitemapUrl}:`, error.message);
+        return [];
+    }
+};
+
+const scrapeWebsite = async (websiteUrl) => {
+    try {
+        console.log("🚀 Checking for Sitemap...");
+        const possibleSitemapUrls = [
+            `${websiteUrl}/sitemap.xml`,
+            `${websiteUrl}/wp-sitemap.xml`,
+            `${websiteUrl}/sitemap_index.xml`
+        ];
+
+        let sitemapFound = null;
+        for (const sitemapUrl of possibleSitemapUrls) {
+            try {
+                await axios.head(sitemapUrl);
+                sitemapFound = sitemapUrl;
+                break;
+            } catch {
+                // Ignore errors and try the next sitemap option
+            }
+        }
+
+        if (!sitemapFound) {
+            console.error("❌ No valid sitemap found.");
+            return;
+        }
+
+        console.log(`✅ Sitemap found: ${sitemapFound}`);
+
+        // Fetch all URLs from the sitemap
+        const allUrls = await fetchSitemapUrls(sitemapFound);
+
+        if (allUrls.length === 0) {
+            console.log("❌ No URLs found in the sitemap.");
+            return;
+        }
+
+        console.log(`✅ Found ${allUrls.length} pages to scrape.`);
+
+        // Scrape content from each URL
+        for (const url of allUrls) {
             await extractContent(url);
         }
 
         console.log("🎉 Scraping Complete!");
     } catch (error) {
-        console.error("❌ Error fetching Sitemap:", error.message);
+        console.error("❌ Error scraping website:", error.message);
     }
 };
 
+// Example usage
+scrapeWebsite("https://thecam.ca");
+
+
 // Run the scraper
-scrapeWebsite();
+//scrapeWebsite();
